@@ -9,12 +9,13 @@ jobs:
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4
-
+  
       - name: Scan des dépendances (requirements.txt)
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
-          scan-ref: 'requirements.txt'
+          # On scanne tout le repo, Trivy va trouver requirements.txt tout seul
+          scan-ref: '.'
           format: 'table'
           exit-code: '1'
           severity: 'CRITICAL,HIGH'
