@@ -1,19 +1,40 @@
 name: Automatisation des tests DevSecOps
-on: push
+
+on:
+  push:
+
 jobs:
   Dependances:
     runs-on: ubuntu-latest
     steps:
-      - name: Dependances
-        run: |
-          echo "ecrire ici le scrypt de contrôle des dépendances"
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Scan des dépendances (requirements.txt)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: 'requirements.txt'
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+
   Dockerfile:
     runs-on: ubuntu-latest
     needs: Dependances
     steps:
-      - name: Test Dockerfile
-        run: |
-          echo "ecrire ici le scrypt de contrôle du Dockerfile"
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Scan du Dockerfile (config)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          scan-ref: 'Dockerfile'
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+
   Deploy:
     runs-on: ubuntu-latest
     needs: Dockerfile
